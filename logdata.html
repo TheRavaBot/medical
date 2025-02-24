@@ -386,7 +386,7 @@ log_userrfid = rfid;
             const user = currentUserName; //
             const role = currentUserRole;
 
-            db.ref("uniib_elect/medical/audit_logs").push({
+            database.ref("uniib_elect/medical/audit_logs").push({
                 timestamp: timestamp,
                 user: user,
                 role: role,
