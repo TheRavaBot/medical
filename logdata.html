@@ -235,6 +235,10 @@ h3 {
   
 
     <script>
+      let currentUserRole;
+        let currentUserName;
+        let log_userrfid;
+        let log_username;    
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
             apiKey: "AIzaSyAmhaIhOWWlPYceSdtJScVIIuZP0Rb71hM",
@@ -251,8 +255,7 @@ h3 {
 
     
 
-        let currentUserRole;
-        let currentUserName;
+  
         window.onload = function () {
             // const loggedInUser = sessionStorage.getItem('loggedInUser');
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
@@ -366,11 +369,31 @@ access();
             };
         }
 
+log_userrfid = rfid;
+        log_username = document.getElementById("first_name").value;
+        
+     logAction("Edited Medical Record", log_userrfid+"_"+ log_username);
+                            
+        
         database.ref("uniib_elect/medical/patients/" + rfid).update(updatedData)
             .then(() => alert("Patient data updated successfully"))
             .catch(error => console.error("Update failed:", error));
     }
 
+
+        function logAction(action, patientID) {
+            const timestamp = new Date().toISOString();
+            const user = currentUserName; //
+            const role = currentUserRole;
+
+            db.ref("uniib_elect/medical/audit_logs").push({
+                timestamp: timestamp,
+                user: user,
+                role: role,
+                action: action,
+                affected_data: patientID
+            });
+        }  
 
     let rfid;
 
