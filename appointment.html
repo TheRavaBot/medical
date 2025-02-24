@@ -214,7 +214,7 @@
                 created_at: new Date().toISOString()
             };
 
-            database.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
+            db.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
                 .then(() => {
                     logAction("ScheduledAppointment", rfid);
                     showMessage();
