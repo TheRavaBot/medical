@@ -202,6 +202,11 @@
         <textarea id="chronic_conditions" placeholder="Chronic Conditions"></textarea>
         <textarea id="allergies" placeholder="Allergies"></textarea>
         <textarea id="medical_history" placeholder="Medical History"></textarea>
+
+         <textarea id="diagnosis" placeholder="Previous Diagnosis(if any)"></textarea>
+        <textarea id="medications" placeholder="Previous Medications(if any)"></textarea>
+        <textarea id="testresults" placeholder="Previous Test results(if any)"></textarea>
+        
         <button onclick="addPatient()">Add Patient</button>
         <p class="error" id="add-patient-error"></p>
     </div>
@@ -279,6 +284,10 @@
                     chronic_conditions: document.getElementById('chronic_conditions').value.trim(),
                     allergies: document.getElementById('allergies').value.trim(),
                     medical_history: document.getElementById('medical_history').value.trim()
+
+                     diagnosis: document.getElementById('diagnosis').value.trim(),
+                    medications: document.getElementById('medications').value.trim(),
+                    test_results: document.getElementById('testresults').value.trim()
                 },
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
