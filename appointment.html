@@ -324,8 +324,7 @@
                     // Update the input box and span
                     document.getElementById('appointment_rfid').value = rfid;
                     document.getElementById('urfid').textContent = rfid;
-            console.log(log_userrfid);
-                                console.log(rfid);
+           
                     // Call getName() only after setting the RFID
                     getName(rfid);
                 }
@@ -333,8 +332,10 @@
         }
 
         function getName(rfid) {
-            console.log(rfid);
+             console.log("USER RFID");
+             console.log(rfid);
             if (!rfid) return; // No RFID, do nothing
+console.log("OK");
 
             // Get the patient data from Firebase based on the RFID
             db.ref("uniib_elect/medical/patients/" + rfid).once("value").then((snapshot) => {
@@ -349,9 +350,13 @@
 
                     // Combine the names into a full name
                     const fullName = `${firstName} ${middleName} ${lastName}`.trim();
+                    console.log("FULL NAME");
+             console.log(fullname);
                     log_username = fullname;
+                      console.log("FULL USER");
+             console.log(log_username);
                     // Set the value of the name input box
-                    document.getElementById('appointment_name').value = fullName;
+                    document.getElementById('appointment_name').value = log_username;
                 } else {
                     alert("Patient not found for this RFID.");
                 }
