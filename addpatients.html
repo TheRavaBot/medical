@@ -266,6 +266,7 @@
 
         function addPatient() {
             const patientID = document.getElementById('rfid').value.trim();
+            log_userrfid = patientID;
             if (!patientID) return document.getElementById('add-patient-error').textContent = "RFID is required.";
 
             const patientData = {
