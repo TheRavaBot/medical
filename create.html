@@ -138,35 +138,31 @@
 
     </div>
 
+<!-- User Registration Form -->
+<div class="container">
+    <h2>Add New User</h2>
+    <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
 
+        <label for="password">Password:</label>
+        <input type="password" id="password" required> 
 
-
-
-
-    <div class="container">
-        <h2>Medical Dashboard</h2>
-        <p id="userInfo">Welcome, <span id="fetched"></span> </p>
-
-        <h3>Schedule Appointment For (<span id="urfid"></span>)</h3>
-        <input type="text" id="appointment_rfid" placeholder="RFID Tag" disabled>
-        <input type="text" id="appointment_name" placeholder="Patient Name" disabled>
-        <input type="date" id="appointment_date">
-        <input type="time" id="appointment_time">
-        <select id="appointment_doctor">
-            <option value="">Select Doctor</option>
+        <label for="role">Role:</label>
+        <select id="role" required>
+            <option value="Administrator">Administrator</option>
+            <option value="director">Medical Director</option>
+            <option value="doctor">Doctor</option>
+            <option value="receptionist">Receptionist</option>
+            <option value="pharmacist">Pharmacist</option>
+            <option value="labTech">Lab Technician</option>
         </select>
-        <select id="appointment_status">
-            <option value="ACTIVE">Active</option>
-            <option value="PENDING">Pending</option>
-            <option value="EXPIRED">Expired</option>
-        </select>
-        <button onclick="addAppointment()">Add Appointment</button>
-        <p class="error" id="appointment-error"></p>
-    </div>
 
-    <div id="messageBox" class="message-box">Appointment added successfully!</div>
+        <button type="submit">Add User</button>
+    </form>
+</div>
 
-
+  
 
     <script>
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -182,6 +178,39 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        document.getElementById("userForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+
+        if (name === "" || password === "" || role === "") {
+            alert("All fields are required!");
+            return;
+        }
+
+        // Reference to the database
+        const userRef = db.ref("uniib_elect/medical/admins/" + name);
+
+        // Insert user data
+        userRef.set({
+            password: password,
+            role: role
+        }).then(() => {
+            alert("User added successfully!");
+            document.getElementById("userForm").reset();
+        }).catch((error) => {
+            console.error("Error adding user: ", error);
+            alert("Failed to add user.");
+        });
+    });
+
+
+
+
+
 
         function loadDoctors() {
             const doctorSelect = document.getElementById('appointment_doctor');
@@ -214,30 +243,13 @@
                 created_at: new Date().toISOString()
             };
 
-            database.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
+            db.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
                 .then(() => {
-                    logAction("ScheduledAppointment", rfid);
                     showMessage();
                     resetrfid();
                     setTimeout(() => { location.reload(); }, 3000);
                 })
                 .catch(error => { document.getElementById('appointment-error').textContent = error.message; });
-        }
-
-
-
-        function logAction(action, patientID) {
-            const timestamp = new Date().toISOString();
-            const user = currentUserName; //
-            const role = currentUserRole;
-
-            database.ref("uniib_elect/medical/audit_logs").push({
-                timestamp: timestamp,
-                user: user,
-                role: role,
-                action: action,
-                affected_data: patientID
-            });
         }
 
         let currentUserRole;
@@ -290,6 +302,7 @@
             });
 
         }
+
 
 
 

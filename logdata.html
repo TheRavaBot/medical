@@ -75,6 +75,70 @@
             border-radius: 5px;
             font-size: 18px;
         }
+
+
+
+
+
+
+
+        /* Hide all fields by default */
+label {
+    display: none;
+}
+
+/* Show only the allowed fields dynamically using JavaScript */
+label.show {
+    display: block;
+}
+
+/* Style the form */
+form {
+    width: 60%;
+    margin: auto;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Input fields */
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Headings */
+h3 {
+    color: #2c3e50;
+    border-bottom: 2px solid #34495e;
+    padding-bottom: 5px;
+}
+
+/* Save Button */
+#saveBtn {
+    width: 100%;
+    background: #27ae60;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+#saveBtn:hover {
+    background: #219150;
+}
+
+
+
+
+
     </style>
 </head>
 
@@ -138,35 +202,36 @@
 
     </div>
 
+<!-- User Registration Form -->
+<div class="container">
+
+    <form id="editPatientForm">
+        <div id="adminSection">
+            <h3>Administrative Data</h3>
+            <label id="first_name_label">First Name: <input type="text" id="first_name"></label>
+            <label id="last_name_label">Last Name: <input type="text" id="last_name"></label>
+            <label id="age_label">Age: <input type="text" id="age"></label>
+            <label id="gender_label">Gender: <input type="text" id="gender"></label>
+            <label id="contact_number_label">Contact Number: <input type="text" id="contact_number"></label>
+        </div>
+    
+        <div id="medicalSection">
+            <h3>Medical Data</h3>
+            <label id="allergies_label">Allergies: <input type="text" id="allergies"></label>
+            <label id="chronic_conditions_label">Chronic Conditions: <input type="text" id="chronic_conditions"></label>
+            <label id="diagnosis_label">Diagnosis: <input type="text" id="diagnosis"></label>
+            <label id="medications_label">Medications: <input type="text" id="medications"></label>
+            <label id="testresults_label">Test Results: <input type="text" id="testresults"></label>
+        </div>
+    
+        <button type="button" id="saveBtn" style="display: none;" onclick="saveChanges()">Save</button>
+    </form>
+    
+
+</div>
 
 
-
-
-
-    <div class="container">
-        <h2>Medical Dashboard</h2>
-        <p id="userInfo">Welcome, <span id="fetched"></span> </p>
-
-        <h3>Schedule Appointment For (<span id="urfid"></span>)</h3>
-        <input type="text" id="appointment_rfid" placeholder="RFID Tag" disabled>
-        <input type="text" id="appointment_name" placeholder="Patient Name" disabled>
-        <input type="date" id="appointment_date">
-        <input type="time" id="appointment_time">
-        <select id="appointment_doctor">
-            <option value="">Select Doctor</option>
-        </select>
-        <select id="appointment_status">
-            <option value="ACTIVE">Active</option>
-            <option value="PENDING">Pending</option>
-            <option value="EXPIRED">Expired</option>
-        </select>
-        <button onclick="addAppointment()">Add Appointment</button>
-        <p class="error" id="appointment-error"></p>
-    </div>
-
-    <div id="messageBox" class="message-box">Appointment added successfully!</div>
-
-
+  
 
     <script>
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -181,64 +246,9 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const database = firebase.database();
 
-        function loadDoctors() {
-            const doctorSelect = document.getElementById('appointment_doctor');
-            db.ref("uniib_elect/medical/admins").orderByChild("role").equalTo("doctor").once("value", snapshot => {
-                snapshot.forEach(childSnapshot => {
-                    const doctor = childSnapshot.val();
-                    const option = document.createElement("option");
-                    option.value = childSnapshot.key;
-                    option.textContent = doctor.name || childSnapshot.key;
-                    doctorSelect.appendChild(option);
-                });
-            });
-        }
-
-        function showMessage() {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.style.display = 'block';
-            setTimeout(() => { messageBox.style.display = 'none'; }, 3000);
-        }
-
-        function addAppointment() {
-            const appointmentID = 'appointment' + new Date().getTime();
-            const appointmentData = {
-                rfid: document.getElementById('appointment_rfid').value.trim(),
-                name: document.getElementById('appointment_name').value.trim(),
-                date: document.getElementById('appointment_date').value.trim(),
-                time: document.getElementById('appointment_time').value.trim(),
-                doctor: document.getElementById('appointment_doctor').value.trim(),
-                status: document.getElementById('appointment_status').value.trim(),
-                created_at: new Date().toISOString()
-            };
-
-            database.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
-                .then(() => {
-                    logAction("ScheduledAppointment", rfid);
-                    showMessage();
-                    resetrfid();
-                    setTimeout(() => { location.reload(); }, 3000);
-                })
-                .catch(error => { document.getElementById('appointment-error').textContent = error.message; });
-        }
-
-
-
-        function logAction(action, patientID) {
-            const timestamp = new Date().toISOString();
-            const user = currentUserName; //
-            const role = currentUserRole;
-
-            database.ref("uniib_elect/medical/audit_logs").push({
-                timestamp: timestamp,
-                user: user,
-                role: role,
-                action: action,
-                affected_data: patientID
-            });
-        }
+    
 
         let currentUserRole;
         let currentUserName;
@@ -259,16 +269,13 @@
                 if (element) {
                     element.textContent = currentUserRole + " " + currentUserName;
                 }
-
-                loadDoctors();  // If logged in, load doctors
-                updateMode();
+access();
                 getRFID();
-                access();
             }
         };
 
 
-
+        
         function access() {
             // const role = currentUserRole; // Assuming currentUserRole is already set
 
@@ -292,68 +299,103 @@
         }
 
 
+    function loadPatientData(rfid) {
+        database.ref("uniib_elect/medical/patients/" + rfid).once("value").then((snapshot) => {
+            if (snapshot.exists()) {
+                const patientData = snapshot.val();
+                const administrativeData = patientData.administrative_data;
+                const medicalData = patientData.medical_data;
 
-        function updateMode() {
-            const statusRef = db.ref("uniib_elect/medical_esp/");
-            statusRef.update({ mode: 2 });
+                // Populate fields
+                document.getElementById("first_name").value = administrativeData.first_name;
+                document.getElementById("last_name").value = administrativeData.last_name;
+                document.getElementById("age").value = administrativeData.age;
+                document.getElementById("gender").value = administrativeData.gender;
+                document.getElementById("contact_number").value = administrativeData.contact_number;
+                document.getElementById("allergies").value = medicalData.allergies;
+                document.getElementById("chronic_conditions").value = medicalData.chronic_conditions;
+                document.getElementById("diagnosis").value = medicalData.diagnosis;
+                document.getElementById("medications").value = medicalData.medications;
+                document.getElementById("testresults").value = medicalData.test_results;
+                showOnlyAllowedFields();
+            }
+        });
+    }
+
+    function showOnlyAllowedFields() {
+        const allowedFields = {
+            "Administrator": ["first_name", "last_name", "age", "gender", "contact_number", "allergies", "chronic_conditions", "diagnosis", "medications", "testresults"],
+            "doctor": ["diagnosis", "medications", "testresults"],
+            "receptionist": ["contact_number", "first_name", "last_name"],
+            // "director": ["age", "gender"],
+            "labTech": ["testresults"],
+            "pharmacist": ["medications"]
+        };
+
+        // Hide all fields first
+        document.querySelectorAll("label").forEach(label => label.style.display = "none");
+
+        // Show only allowed fields
+        if (allowedFields[currentUserRole]) {
+            allowedFields[currentUserRole].forEach(id => {
+                document.getElementById(id + "_label").style.display = "block";
+            });
+            document.getElementById("saveBtn").style.display = "block"; // Show save button if they can edit something
+        }
+    }
+
+    function saveChanges() {
+        let updatedData = {};
+        
+        if (["Administrator", "receptionist", "director"].includes(currentUserRole)) {
+            updatedData["administrative_data"] = {
+                first_name: document.getElementById("first_name").value,
+                last_name: document.getElementById("last_name").value,
+                age: document.getElementById("age").value,
+                gender: document.getElementById("gender").value,
+                contact_number: document.getElementById("contact_number").value
+            };
+        }
+        if (["Administrator", "doctor", "labTech", "pharmacist"].includes(currentUserRole)) {
+            updatedData["medical_data"] = {
+                allergies: document.getElementById("allergies").value,
+                chronic_conditions: document.getElementById("chronic_conditions").value,
+                diagnosis: document.getElementById("diagnosis").value,
+                medications: document.getElementById("medications").value
+            };
         }
 
-        function resetrfid() {
-            const statusRef = db.ref("uniib_elect/medical_esp/");
-            statusRef.update({ rfid: "...Waiting For Card..." });
-        }
+        database.ref("uniib_elect/medical/patients/" + rfid).update(updatedData)
+            .then(() => alert("Patient data updated successfully"))
+            .catch(error => console.error("Update failed:", error));
+    }
 
 
-        function getRFID() {
-            const statusRef = db.ref("uniib_elect/medical_esp/");
+    let rfid;
 
-            // Listen for changes in "status"
+    function getRFID() {
+            const statusRef = database.ref("uniib_elect/medical_esp/");
+
+            // Listen for changes in "rfid"
             statusRef.on('value', (snapshot) => {
                 if (snapshot.exists()) {
                     const statusData = snapshot.val();
-                    const rfid = statusData.rfid;
+                     rfid = statusData.rfid;
 
-                    // Update the input box and span
-                    document.getElementById('appointment_rfid').value = rfid;
-                    document.getElementById('urfid').textContent = rfid;
+                    if (rfid != "...Waiting For Card...") {
+                        loadPatientData(rfid);
+                    }
 
-                    // Call getName() only after setting the RFID
-                    getName(rfid);
                 }
             });
         }
+    // Load patient data on page load
+    // window.onload = getRFID;
 
-        function getName(rfid) {
-            if (!rfid) return; // No RFID, do nothing
 
-            // Get the patient data from Firebase based on the RFID
-            db.ref("uniib_elect/medical/patients/" + rfid).once("value").then((snapshot) => {
-                if (snapshot.exists()) {
-                    const patientData = snapshot.val();
-                    const administrativeData = patientData.administrative_data;
 
-                    // Extract first, middle, and last name
-                    const firstName = administrativeData.first_name || "";
-                    const middleName = administrativeData.middle_name || "";
-                    const lastName = administrativeData.last_name || "";
-
-                    // Combine the names into a full name
-                    const fullName = `${firstName} ${middleName} ${lastName}`.trim();
-
-                    // Set the value of the name input box
-                    document.getElementById('appointment_name').value = fullName;
-                } else {
-                    alert("Patient not found for this RFID.");
-                }
-            }).catch((error) => {
-                console.error("Error fetching patient data: ", error);
-                alert("Error fetching patient data.");
-            });
-        }
-
-        // Call the function to start listening for RFID updates
-        getRFID();
-
+    // Call function when the page loads
+//    window.onload = loadUsers;
 
         // Logout function
         function Logout() {
