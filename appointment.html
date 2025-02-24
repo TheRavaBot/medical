@@ -216,7 +216,7 @@
 
             db.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
                 .then(() => {
-                    logAction("ScheduledAppointment", rfid);
+                    logAction("ScheduledAppointment", log_userrfid+"_"+ log_username);
                     showMessage();
                     resetrfid();
                     setTimeout(() => { location.reload(); }, 3000);
@@ -242,6 +242,8 @@
 
         let currentUserRole;
         let currentUserName;
+        let log_userrfid;
+        let log_username;
         window.onload = function () {
             // const loggedInUser = sessionStorage.getItem('loggedInUser');
             const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
@@ -312,7 +314,7 @@
                 if (snapshot.exists()) {
                     const statusData = snapshot.val();
                     const rfid = statusData.rfid;
-
+                    log_userrfid = statusData.rfid;
                     // Update the input box and span
                     document.getElementById('appointment_rfid').value = rfid;
                     document.getElementById('urfid').textContent = rfid;
@@ -339,7 +341,7 @@
 
                     // Combine the names into a full name
                     const fullName = `${firstName} ${middleName} ${lastName}`.trim();
-
+                    log_username = fullname;
                     // Set the value of the name input box
                     document.getElementById('appointment_name').value = fullName;
                 } else {
