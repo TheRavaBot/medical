@@ -213,15 +213,15 @@
                 status: document.getElementById('appointment_status').value.trim(),
                 created_at: new Date().toISOString()
             };
-            console.log(rfid);
-            console.log(log_userrfid);
-            console.log(log_username);
+            // console.log(rfid);
+            // console.log(log_userrfid);
+            // console.log(log_username);
             db.ref("uniib_elect/medical/appointments/" + appointmentID).set(appointmentData)
                 .then(() => {
-                                console.log(rfid);
-            console.log(log_userrfid);
-            console.log(log_username);
-                    logAction("ScheduledAppointment", log_userrfid+"_"+ log_username);
+            //                     console.log(rfid);
+            // console.log(log_userrfid);
+            // console.log(log_username);
+              //      logAction("ScheduledAppointment", log_userrfid+"_"+ log_username);
                     showMessage();
                     resetrfid();
                     setTimeout(() => { location.reload(); }, 3000);
