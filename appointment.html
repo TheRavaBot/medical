@@ -240,7 +240,7 @@
             const user = currentUserName; //
             const role = currentUserRole;
 
-            database.ref("uniib_elect/medical/audit_logs").push({
+            db.ref("uniib_elect/medical/audit_logs").push({
                 timestamp: timestamp,
                 user: user,
                 role: role,
